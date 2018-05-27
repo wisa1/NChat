@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
   <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
@@ -7,4 +8,5 @@
 
   <link href="assets/css/main.css" rel="stylesheet">
   <link href="assets/css/login.css" rel="stylesheet">
+  <link href="assets/css/navbar.css" rel="stylesheet">
 </head>

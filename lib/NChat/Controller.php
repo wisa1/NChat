@@ -2,6 +2,7 @@
 
 namespace NChat;
 use Data\DataManager;
+use NChat\BaseObject;
 
 /**
  * Controller
@@ -16,21 +17,19 @@ class Controller
 
 	const ACTION = 'action';
 	const ACTION_LOGIN = 'login';
-	const PAGE = 'page';
-	/*
-
-	const CC_NAME = 'nameOnCard';
-	const CC_NUMBER = 'cardNumber';
-	const ACTION_ADD = 'addToCart';
-	const ACTION_REMOVE = 'removeFromCart';
-	const ACTION_ORDER = 'placeOrder';
-	
 	const ACTION_LOGOUT = 'logout';
-	const USER_NAME = 'userName';
-	const USER_PASSWORD = 'password';
 
+	const USER_NAME = 'username';
+	const USER_EMAIL = 'email';
+	const USER_PASSWORD = 'password';
+	const USER_PASSWORD_CONFIRMATION ='password-confirmation';
+	
+	const PAGE = 'page';
+	const REGISTER = 'register';
+	
 	private static $instance = false;
 
+	//Singleton - getInstance
 	public static function getInstance() : Controller {
 
 		if ( ! self::$instance) {
@@ -41,7 +40,7 @@ class Controller
 	}
 
 	private function __construct() {
-
+		//no members to initialize
 	}
 
 	public function invokePostAction(): bool {
@@ -55,13 +54,12 @@ class Controller
 
 			return null;
 		}
-
-
 		// now process the assigned action
 		$action = $_REQUEST[ self::ACTION ];
 
 		switch ($action) {
 
+			/*
 			case self::ACTION_ADD :
 				ShoppingCart::add((int) $_REQUEST['bookId']);
 				Util::redirect();
@@ -84,6 +82,7 @@ class Controller
 				}
 
 				break;
+			*/
 
 			case self::ACTION_LOGIN :
 				if (!AuthenticationManager::authenticate($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD])) {
@@ -96,6 +95,14 @@ class Controller
 				AuthenticationManager::signOut();
 				Util::redirect();
 				break;
+			
+			case self::REGISTER: 
+			if(self::validateRegisterUserInput($_REQUEST)){
+				AuthenticationManager::register($_REQUEST[self::USER_NAME],$_REQUEST[self::USER_EMAIL], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::USER_PASSWORD_CONFIRMATION]);
+			}
+			
+			Util::redirect();
+			break;
 
 			default :
 				throw new \Exception('Unknown controller action: ' . $action);
@@ -103,43 +110,22 @@ class Controller
 		}
 	}
 
-
-	protected function processCheckout(string $nameOnCard = null, string $cardNumber) : bool {
-
-		$errors = [];
-
-		$nameOnCard = trim($nameOnCard);
-		if ($nameOnCard == null || strlen($nameOnCard) == 0) {
-			$errors[] = "Invalid name on card.";
-		}
-		if ($cardNumber == null || strlen($cardNumber) != 16 || !ctype_digit($cardNumber)) {
-			$errors[] = "Invalid card number. Card number must be sixteen digits.";
-		}
-
-		if (sizeof($errors) > 0) {
-			$this->forwardRequest($errors);
+	protected function validateRegisterUserInput(array $arr): bool{
+		if(strlen($arr[self::USER_PASSWORD]) < 5){
+			self::forwardRequest(['Passwort zu kurz!']);
 			return false;
 		}
 
-		if (ShoppingCart::size() == 0) {
-			$this->forwardRequest(['Shopping cart is empty']);
+		if($arr[self::USER_PASSWORD] != $arr[self::USER_PASSWORD_CONFIRMATION]){
+			self::forwardRequest(['Passwörter stimmen nicht überein!']);
 			return false;
 		}
 
-		$user = AuthenticationManager::getAuthenticatedUser();
-		$orderId = DataManager::createOrder($user->getId(), ShoppingCart::getAll(), $nameOnCard, $cardNumber);
-
-		if (!$orderId) {
-			$this->forwardRequest(['Could not create order.']);
-			return false;
+		if(strlen($arr[self::USER_NAME]) < 4){
+			self::forwardRequest(['Benutzername zu kurz, verwenden Sie bitte mindestens 4 Zeichen']);
 		}
-
-		ShoppingCart::clear();
-		Util::redirect('index.php?view=success&orderId=' . $orderId);
 		return true;
-
 	}
-
 
 	protected function forwardRequest(array $errors = null, $target = null) {
 		if ($target == null) {
@@ -156,5 +142,4 @@ class Controller
 			exit();
 		}
 	}
-*/
 }

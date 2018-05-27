@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: r8r
- * Date: 24/03/2018
- * Time: 14:04
- */
-use NChat\BaseObject;
 
+use NChat\BaseObject;
 namespace NChat;
 
 class Util extends BaseObject {
@@ -41,6 +35,7 @@ class Util extends BaseObject {
 				rawurldecode($_REQUEST[Controller::PAGE]) :
 				$_SERVER['REQUEST_URI'];
 		}
+		var_dump($page);
 		header("Location: $page");
 		exit();
 	}

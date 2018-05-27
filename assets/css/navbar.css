@@ -1,0 +1,18 @@
+.nchatNavBar{
+  border-color:#000;
+  margin-bottom:20px;
+  display:block;
+}
+
+.container{
+  margin-top:25px;
+}
+
+.img-circle{
+  height: 45px;
+  width: 45px;
+}
+
+.loginDiv{
+  width: 120px;
+}
