@@ -33,6 +33,6 @@ class AuthenticationManager extends BaseObject {
 	}
 
 	public static function register(string $userName, string $email, string $password){
-
+		$user = DataManager::createUser($userName, $email, $password);
 	}
 }

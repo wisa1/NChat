@@ -3,6 +3,7 @@
 namespace Data;
 
 use NChat\User;
+use NChat\Channel;
 include 'IDataManager.php';
 
 class DataManager implements IDataManager {
@@ -186,7 +187,6 @@ class DataManager implements IDataManager {
 					);
 				", [$orderId, $bookId]);
 			}
-
 			$con->commit();
 		}
 		catch (\Exception $e) {
@@ -196,24 +196,61 @@ class DataManager implements IDataManager {
 
 		self::closeConnection($con);
 		return $orderId;
-    }
+		}
+		
+		public static function createUser(string $userName, string $email, string $password) : User{
+			$con = self::getConnection();
+
+			self::query($con, "
+			INSERT INTO users 
+			( 
+				userName, 
+				passwordHash,
+				email
+			) VALUES ( ?, ? ,?)", 
+			[$userName, hash('sha1', $userName.'#'.$password), $password]);
+
+			$usr = self::getUserByUserName($userName);
+
+			self::closeConnection($con);
+			return $usr;
+		}
+
+		public static function getAllChannels() : array {
+			$con = self::getConnection();
+			$res = self::query($con, "
+				SELECT name, description
+				FROM channels;
+			");
+
+			while ($chan = self::fetchObject($res)) {
+				$channels[] = new Channel($chan->id, $chan->name, $chan->description, $chan->lastActivity);
+			}
+	
+			self::close($res);
+			self::closeConnection($con);
+	
+			return $channels;
+		}
+
+		public static function getChannelsForUser(int $userId) : array {
+			$con = self::getConnection();
+			$res = self::query($con, "
+				SELECT id, name, description, lastActivity, id_user
+				FROM channels c
+				INNER JOIN channels_users cu
+				ON c.id = cu.id_channel
+				WHERE id_user = ?
+				ORDER BY lastActivity DESC
+			", [$userId]);
+
+			while ($chan = self::fetchObject($res)) {
+				$channels[] = new Channel($chan->id, $chan->name, $chan->description, $chan->lastActivity);
+			}
+	
+			self::close($res);
+			self::closeConnection($con);
+	
+			return $channels;
+		}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

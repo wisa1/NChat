@@ -6,7 +6,7 @@ $view = isset($_REQUEST['view']) ? $_REQUEST['view'] : $default_view;
 
 $postAction = isset($_REQUEST[\NChat\Controller::ACTION]) ? $_REQUEST[\NChat\Controller::ACTION] : null;
 if ($postAction != null) {
-	NChat\Controller::getInstance()->invokePostAction();
+	NChat\Controller::getInstance()->invokeAction();
 }
 
 if (file_exists(__DIR__ . '/views/' . $view . '.php')) {

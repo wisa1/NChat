@@ -18,7 +18,7 @@ use NChat\Util;
 			    			</div>
 
 			    			<div class="form-group">
-			    				<input type="email" name="<?php echo NChat\Controller::USER_EMAIL?>" id="email" class="form-control input-sm" placeholder="Email Address">
+			    				<input type="email" name="<?php echo NChat\Controller::USER_EMAIL?>" id="email" class="form-control input-sm" placeholder="Email Adresse">
 			    			</div>
 
 			    			<div class="row">

@@ -5,7 +5,7 @@ use NChat\Util;
 
 if (AuthenticationManager::isAuthenticated()) {
 		var_dump($_REQUEST);
-    Util::redirect("index.php");
+    Util::redirect("index.php?view=chat");
 }
 
 $userName = isset($_REQUEST['username']) ? $_REQUEST['username'] : null;
@@ -23,7 +23,7 @@ $userName = isset($_REQUEST['username']) ? $_REQUEST['username'] : null;
 				
 					<input class="btn btn-block btn-lg btn-success submit" type="submit" value="Login">
                     <p>Bereits Mitglied? Logge dich mit Benutzername und Passwort ein</p>
-                    <p>Neu? Kein Problem, erstelle einfach dein Konto durch Eingabe von Benutzername und Passwort</p>
+                    <p>Neu? Kein Problem, erstelle einfach dein Konto.</p>
 				</form>
 	</div>
 </div>

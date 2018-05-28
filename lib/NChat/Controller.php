@@ -43,46 +43,10 @@ class Controller
 		//no members to initialize
 	}
 
-	public function invokePostAction(): bool {
-
-		if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-			throw new \Exception('Controller can only handle POST requests.');
-
-			return null;
-		} elseif ( ! isset($_REQUEST[ self::ACTION ])) {
-			throw new \Exception(self::ACTION . ' not specified.');
-
-			return null;
-		}
-		// now process the assigned action
+	public function invokeAction(): bool {
 		$action = $_REQUEST[ self::ACTION ];
 
 		switch ($action) {
-
-			/*
-			case self::ACTION_ADD :
-				ShoppingCart::add((int) $_REQUEST['bookId']);
-				Util::redirect();
-				break;
-
-			case self::ACTION_REMOVE :
-				ShoppingCart::remove((int) $_REQUEST['bookId']);
-				Util::redirect();
-				break;
-
-			case self::ACTION_ORDER :
-				$user = AuthenticationManager::getAuthenticatedUser();
-
-				if ($user == null) {
-					$this->forwardRequest(['Not logged in.']);
-				}
-
-				if (!$this->processCheckout($_POST[self::CC_NAME], $_POST[self::CC_NUMBER])) {
-					$this->forwardRequest(['Checkout failed.']);
-				}
-
-				break;
-			*/
 
 			case self::ACTION_LOGIN :
 				if (!AuthenticationManager::authenticate($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD])) {
@@ -93,16 +57,15 @@ class Controller
 
 			case self::ACTION_LOGOUT :
 				AuthenticationManager::signOut();
-				Util::redirect();
+				Util::redirect("index.php");
 				break;
 			
-			case self::REGISTER: 
-			if(self::validateRegisterUserInput($_REQUEST)){
-				AuthenticationManager::register($_REQUEST[self::USER_NAME],$_REQUEST[self::USER_EMAIL], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::USER_PASSWORD_CONFIRMATION]);
-			}
-			
-			Util::redirect();
-			break;
+			case self::REGISTER : 
+				if(self::validateRegisterUserInput($_REQUEST)){
+					AuthenticationManager::register($_REQUEST[self::USER_NAME],$_REQUEST[self::USER_EMAIL], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::USER_PASSWORD_CONFIRMATION]);
+				}			
+				Util::redirect("index.php?view=login");
+				break;
 
 			default :
 				throw new \Exception('Unknown controller action: ' . $action);

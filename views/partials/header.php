@@ -13,8 +13,14 @@ if (isset($_GET["errors"])) {
 <body>
 <div class="navbar navbar-fixed-top nchatNavBar">
   <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
+        <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
       <a class="navbar-brand" href="/NChat">NChat</a>
     </div>
 
@@ -22,44 +28,26 @@ if (isset($_GET["errors"])) {
       <ul class="nav navbar-nav">
         <li <?php
 		if (!isset($_GET['view'])) print ' class="active"';
-    ?>><a href="index.php">Home</a></li>
-    <!--
-        <li <?php
-		if (isset($_GET['view']) && $_GET['view'] == 'list') print ' class="active"';
-		?>><a href="index.php?view=list">List</a></li>
-        <li <?php
-		if (isset($_GET['view']) && $_GET['view'] == 'search') print ' class="active"';
-		?>><a href="index.php?view=search">Search</a></li>
-    
-
-    <li <?php
-		if (isset($_GET['view']) && $_GET['view'] == 'checkout') print ' class="active"';
-    ?>><a href="index.php?view=checkout">Checkout</a></li>
-    -->
+    ?>><a href="index.php?view=chat">Chat</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
-        <li>
+        <li class="nav-item">
           <?php if ($user == null): ?>
-            <a href="index.php?view=register">Registrieren</a>
+            <a class="nav-link" href="index.php?view=register">Registrieren</a>
           <?php else: ?>
-            <p> Eingeloggt als <?php  echo ($user->getUserName()) ?> </p>
+            <p class="navbar-text"> Eingeloggt als <i><?php  echo ($user->getUserName()) ?></i> </p>
         </li>
         
         <?php endif; ?>
-        <li>
+        <li class="nav-item">
           <?php if ($user == null): ?>
-            <div class="loginDiv"> 
-              <img src="/NChat/assets/img/redcircle.png" class="img-circle"></img>
-              <a href="index.php?view=login">Einloggen</a>
-            </div>
-          <?php else: ?>
-            <div class="loginDiv"> 
-              <img src="/NChat/assets/img/greencircle.png" class="img-circle"></img>
-              <form method="post" action="<?php echo Util::action(NChat\Controller::ACTION_LOGOUT); ?>" style="display:inline">
-                  <input class="btn btn-xs" role="button" type="submit" value="Logout" />
-              </form>
-            </div>
+
+              <!--<img src="/NChat/assets/img/redcircle.png" class="img-circle"></img> -->
+              <a class="nav-link" href="index.php?view=login">Einloggen</a>
+          <?php else: ?> 
+              <!--<img src="/NChat/assets/img/greencircle.png" class="img-circle"></img>-->
+              <a class="nav-link" href="index.php?view=welcome&action=logout">Ausloggen</a>
           <?php endif; ?>
         </li>
       </ul> <!-- /. login -->
