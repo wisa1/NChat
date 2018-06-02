@@ -12,7 +12,6 @@ class AuthenticationManager extends BaseObject {
 		    $user->getPasswordHash() == hash('sha1', $userName . '#' . $password)
 		) {
 			$_SESSION['user'] = $user->getId();
-			var_dump($_SESSION);
 			return true;
 			
 		}

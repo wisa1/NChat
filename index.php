@@ -15,3 +15,4 @@ if (file_exists(__DIR__ . '/views/' . $view . '.php')) {
 else {
 	require_once('views/' . $default_view . '.php');
 }
+

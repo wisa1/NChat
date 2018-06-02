@@ -15,7 +15,7 @@ use NChat\Util;
 			    		<form role="form" method="post" action="<?php echo Util::action(NChat\Controller::REGISTER, array('view' => $view)); ?>">
                 <div class="form-group">
 			    				<input type="text" name="<?php echo NChat\Controller::USER_NAME?>" id="username" class="form-control input-sm" placeholder="Benutzername">
-			    			</div>
+								</div>
 
 			    			<div class="form-group">
 			    				<input type="email" name="<?php echo NChat\Controller::USER_EMAIL?>" id="email" class="form-control input-sm" placeholder="Email Adresse">

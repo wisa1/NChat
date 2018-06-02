@@ -23,6 +23,10 @@ class Controller
 	const USER_EMAIL = 'email';
 	const USER_PASSWORD = 'password';
 	const USER_PASSWORD_CONFIRMATION ='password-confirmation';
+
+	const NEW_POST = 'newPost';
+	const NEW_TITLE = 'newTitle';
+	const NEW_TEXT = 'newText';
 	
 	const PAGE = 'page';
 	const REGISTER = 'register';
@@ -65,6 +69,11 @@ class Controller
 					AuthenticationManager::register($_REQUEST[self::USER_NAME],$_REQUEST[self::USER_EMAIL], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::USER_PASSWORD_CONFIRMATION]);
 				}			
 				Util::redirect("index.php?view=login");
+				break;
+
+			case self::NEW_POST :
+				//DataManager::CreateNewPost($_REQUEST[])
+				
 				break;
 
 			default :

@@ -12,4 +12,5 @@ interface IDataManager {
 	public static function getPostsByChannelId(int $channelId);
 	public static function createOrder(int $userId, array $bookIds, string $nameOnCard, string $cardNumber) : int;
 	public static function createUser(string $userName, string $email, string $password) : User;
+	public static function createNewPost(int $channelId, int $userId, string $title, string $text)
 }
