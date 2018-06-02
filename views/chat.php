@@ -2,12 +2,16 @@
 
 use NChat\Channel;
 use Data\DataManager;
+use NChat\Post;
 
 use NChat\AuthenticationManager;
 require_once('views/partials/header.php'); 
 
 $user = AuthenticationManager::getAuthenticatedUser();
-$channels = DataManager::getChannelsForUser($user->getId());
+$channels = null;
+if($user != null) {
+  $channels = DataManager::getChannelsForUser($user->getId());
+}
 
 ?>
 
@@ -20,9 +24,11 @@ $channels = DataManager::getChannelsForUser($user->getId());
 
       <!-- Sidebar Links -->
       <ul class="list-unstyled components">
-        <?php foreach($channels as $chan) { ?>
+        <?php
+          if($channels != null){
+          foreach($channels as $chan) { ?>
         <li><a class="navLink" id="<?php echo $chan->getId();?>" href="#"><?php echo '#'.$chan->getName();?></a></li>
-        <?php } ?>
+        <?php } } //endif endforeach?>
       </ul>
     </nav>  
   </div>        
@@ -34,10 +40,14 @@ $channels = DataManager::getChannelsForUser($user->getId());
 </div>
 
 <script>
+  //Link - Event into ajax loading the partial for chat content
   $(".navLink").click(function(){
     $(".navLink").removeClass("active");
     $(this).addClass("active");
-    $("#content").load("views/chatContent.php?channelid=1");
+
+    var toload = "index.php?view=chatContent&channelid=" + $(this).attr('id');
+    //alert(toload);
+    $("#content").load(toload);
 
   })
 </script>

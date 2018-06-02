@@ -4,6 +4,7 @@ namespace Data;
 
 use NChat\User;
 use NChat\Channel;
+use NChat\Post;
 include 'IDataManager.php';
 
 class DataManager implements IDataManager {
@@ -233,7 +234,7 @@ class DataManager implements IDataManager {
 			return $channels;
 		}
 
-		public static function getChannelsForUser(int $userId) : array {
+		public static function getChannelsForUser(int $userId) : ?array {
 			$con = self::getConnection();
 			$res = self::query($con, "
 				SELECT id, name, description, lastActivity, id_user
@@ -244,6 +245,7 @@ class DataManager implements IDataManager {
 				ORDER BY lastActivity DESC
 			", [$userId]);
 
+			$chan = null;
 			while ($chan = self::fetchObject($res)) {
 				$channels[] = new Channel($chan->id, $chan->name, $chan->description, $chan->lastActivity);
 			}
@@ -252,5 +254,25 @@ class DataManager implements IDataManager {
 			self::closeConnection($con);
 	
 			return $channels;
+		}
+
+		public static function getPostsByChannelId(int $channelId) : ?array {
+			$con = self::getConnection();
+			$res = self::query($con, "
+				SELECT id, id_user, id_channel, title, text
+				FROM posts 
+				WHERE id_channel = ?
+			", [$channelId]);
+
+
+			$posts = null;
+			while ($pos = self::fetchObject($res)) {
+				$posts[] = new Post($pos->id, $pos->id_user, $pos->id_channel, $pos->title, $pos->text);
+			}
+	
+			self::close($res);
+			self::closeConnection($con);
+	
+			return $posts;
 		}
 }

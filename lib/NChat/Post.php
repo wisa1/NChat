@@ -4,7 +4,7 @@ namespace NChat;
 use Data\DataManager;
 
 class Post extends Entity {
-  private $userid;
+  private $userId;
   private $userName;
   private $channelId;
   private $title;
@@ -12,7 +12,6 @@ class Post extends Entity {
 
 	public function __construct(int $id, int $userId, int $channeldId, string $title, string $text) {
 		parent::__construct($id);
-		$this->userName = $userName;
     $this->userId = $userId;
     $this->userName = DataManager::getUserById($userId)->getUserName();
     $this->channelId = $channeldId;

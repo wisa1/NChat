@@ -31,6 +31,11 @@ width: 25%;
 width: 75%;
 }
 
+.postContainer{
+  border-style: outset;
+  width: 100%;
+}
+
 .container{
   margin-top:35px;
   margin-left:0px;
