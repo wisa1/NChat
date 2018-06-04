@@ -6,11 +6,11 @@ use NChat\AuthenticationManager;
 
 use Data\DataManager;
 $posts = null;
-$posts = DataManager::getPostsByChannelId($_REQUEST["channelid"]);
+
 $user = AuthenticationManager::getAuthenticatedUser();
 
+$posts = DataManager::getPostsByChannelId($_REQUEST["channelid"], $user->getId());
 $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId());
-echo $editable;
 ?>
 
 <div class='container'>
@@ -18,22 +18,30 @@ echo $editable;
   if ($posts != null){
     foreach($posts as $post){
   ?>    
+    
 		 <div class="media comment-box">
         <div class="media comment-header">
+          <p> <?php echo $post->getImportant(); ?> </p>
           <p class="media-heading">Von: <?php echo $post->getUserName(); ?></p>
           <p class="media-heading">Titel: <?php echo $post->getTitle(); ?></p>
           
           <?php if($post->getId() == $editable) { ?>
-          <button type="button" class="actionButton" data-toggle="modal" data-target="#myModal">
-            <span class="glyphicon glyphicon-pencil"></span>
-          </button>
+            <button type="button" class="actionButton" data-toggle="modal" data-target="#editModal">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </button>
+
+            <button type="button" class="actionButton">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+          <?php }?>
 
           <button type="button" class="actionButton">
-            <span class="glyphicon glyphicon-remove"></span>
+            <?php if($post->getImportant() == 1){ ?>
+              <span class="glyphicon glyphicon-star"></span>
+            <?php }  else { ?>
+              <span class="glyphicon glyphicon-star-empty"></span>
+            <?php } ?>
           </button>
-
-          
-          <?php }?>
         </div>
         
         <div class="media-body">
@@ -46,6 +54,7 @@ echo $editable;
 ?>
 </div>
 
+<!-- New Post - Form -->
 <form class="newPostForm" id="newPostForm">
   <p> Neuen Beitrag erstellen </p>
   <div class="input-group">
@@ -63,21 +72,24 @@ echo $editable;
   </div>
 </form>
 
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
+<!-- Edit - Modal Form -->
+<div id="editModal" class="modal fade" role="dialog">
+  <?php
+    $editablePost = DataManager::getPostByPostId($editable, $user->getId());
+  ?>
   <div class="modal-dialog">
-
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+        <h4 class="modal-title"><?php echo $editablePost->getTitle(); ?></h4>
       </div>
       <div class="modal-body">
-        <p>Some text in the modal.</p>
+        <textarea id="editedText"><?php echo $editablePost->getText(); ?> </textarea>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="editConfirm" type="button" class="btn btn-default" data-dismiss="modal">Speichern</button>
+        <button id="editAbort" type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
       </div>
     </div>
 
@@ -86,13 +98,13 @@ echo $editable;
 
 <script>
   $("#newPostForm").submit(function(e) {
-    var url = "index.php?view=chat&action=newPost"; // the script where you handle the form input.
+    var url = "index.php?view=chat&action=newPost";
     $.ajax({
           type: "POST",
           url: url,
           data: $("#newPostForm").serialize()
                 +"&channelId="+<?php echo $_REQUEST["channelid"]; ?>+
-                "&userId="+<?php echo $user->getId(); ?>, // serializes the form's elements.
+                "&userId="+<?php echo $user->getId(); ?>, 
           success: function(data)
           {
             var toload = "index.php?view=chatContent" + 
@@ -102,10 +114,6 @@ echo $editable;
         });
     e.preventDefault(); // avoid to execute the actual submit of the form.
   });
-
-  $(".glyphicon-pencil").click(function(){
-    alert("edit something");
-  })  
 
   $(".glyphicon-remove").click(function(){
     var url = "index.php?view=chat";
@@ -119,5 +127,20 @@ echo $editable;
             $("#content").load(toload);
           }
     })
-  })  
+  })
+
+  $('#editConfirm').click(function(){
+    var url = "index.php?view=chat";
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: encodeURI("action=editPost&postId=" + <?php echo $editable ?> + "&newText=" + $('#editedText').val()),
+        success: function(data){
+          var toload = "index.php?view=chatContent" + 
+          "&channelid="+ <?php echo $_REQUEST["channelid"] ?>;
+          $("#content").load(toload);
+        }
+    })
+  })
+
 </script>

@@ -256,18 +256,39 @@ class DataManager implements IDataManager {
 			return $channels;
 		}
 
-		public static function getPostsByChannelId(int $channelId) : ?array {
+		public static function getPostByPostId(int $postId, int $userId) : ?Post {
 			$con = self::getConnection();
 			$res = self::query($con, "
-				SELECT id, id_user, id_channel, title, text
-				FROM posts 
-				WHERE id_channel = ? AND deleted = 0;
-			", [$channelId]);
+				SELECT id, p.id_user, id_channel, title, text, important
+				FROM posts p
+				LEFT OUTER JOIN posts_users pu
+				ON p.id = pu.id_post AND pu.id_user = ?
+				WHERE id = ? AND 
+							deleted = 0;
+			", [$userId, $postId]);
+
+			if($res != null){
+				$post = self::fetchObject($res);
+				return new Post($post->id, $post->id_user, $post->id_channel, $post->title, $post->text, $post->important);
+			}
+			return null;
+		}
+
+		public static function getPostsByChannelId(int $channelId, int $userId) : ?array {
+			$con = self::getConnection();
+			$res = self::query($con, "
+				SELECT id, p.id_user, id_channel, title, text, pu.important
+				FROM posts p
+				LEFT OUTER JOIN posts_users pu
+				ON p.id = pu.id_post and pu.id_user = ?
+				WHERE id_channel = ? AND 
+							deleted = 0;
+			", [$userId, $channelId]);
 
 
 			$posts = null;
 			while ($pos = self::fetchObject($res)) {
-				$posts[] = new Post($pos->id, $pos->id_user, $pos->id_channel, $pos->title, $pos->text);
+				$posts[] = new Post($pos->id, $pos->id_user, $pos->id_channel, $pos->title, $pos->text, $pos->important);
 			}
 	
 			self::close($res);
@@ -304,7 +325,7 @@ class DataManager implements IDataManager {
 					[$channelId]);
 					
 					$pos2 = self::fetchObject($res)->id;
-					if($pos == $pos2){
+					if($pos == $pos2 && $pos2 != null){
 						self::closeConnection($con);
 						return $pos;
 					}
@@ -315,11 +336,23 @@ class DataManager implements IDataManager {
 
 		public static function deletePost(int $postId) {
 			$con = self::getConnection();
-			$res = self::query($con, "
+			self::query($con, "
 				UPDATE posts 
 				SET deleted = 1
 				WHERE id = ?",
 				[$postId]);
+
+				self::closeConnection($con);
+				return 0;
+		}
+
+		public static function editPost(int $postId, string $text){
+			$con = self::getConnection();
+			self::query($con, "
+				UPDATE posts 
+				SET text = ?
+				WHERE id = ?",
+				[$text, $postId]);
 
 				self::closeConnection($con);
 				return 0;

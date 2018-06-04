@@ -98,7 +98,30 @@ CREATE TABLE IF NOT EXISTS `fh_2018_scm4_s1610307026`.`posts` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 18
+AUTO_INCREMENT = 22
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `fh_2018_scm4_s1610307026`.`posts_users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `fh_2018_scm4_s1610307026`.`posts_users` (
+  `id_post` INT(11) NOT NULL,
+  `id_user` INT(11) NOT NULL,
+  `important` TINYINT(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id_post`, `id_user`),
+  INDEX `posts_users_fk_users_idx` (`id_user` ASC),
+  CONSTRAINT `posts_users_fk_posts`
+    FOREIGN KEY (`id_post`)
+    REFERENCES `fh_2018_scm4_s1610307026`.`posts` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `posts_users_fk_users`
+    FOREIGN KEY (`id_user`)
+    REFERENCES `fh_2018_scm4_s1610307026`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
 

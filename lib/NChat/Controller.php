@@ -29,6 +29,7 @@ class Controller
 	const NEW_TEXT = 'newText';
 	const DELETE_POST = 'deletePost';
 	const POST_ID = 'postId';
+	const EDIT_POST = 'editPost';
 	
 	const PAGE = 'page';
 	const REGISTER = 'register';
@@ -55,7 +56,8 @@ class Controller
 		switch ($action) {
 
 			case self::ACTION_LOGIN :
-				if (!AuthenticationManager::authenticate($_REQUEST[self::USER_NAME], $_REQUEST[self::USER_PASSWORD])) {
+				if (!AuthenticationManager::authenticate(htmlentities($_REQUEST[self::USER_NAME]), 
+				                                         htmlentities($_REQUEST[self::USER_PASSWORD]))) {
 					self::forwardRequest(['Invalid user credentials.']);
 				}
 				Util::redirect();
@@ -68,19 +70,33 @@ class Controller
 			
 			case self::REGISTER : 
 				if(self::validateRegisterUserInput($_REQUEST)){
-					AuthenticationManager::register($_REQUEST[self::USER_NAME],$_REQUEST[self::USER_EMAIL], $_REQUEST[self::USER_PASSWORD], $_REQUEST[self::USER_PASSWORD_CONFIRMATION]);
+					AuthenticationManager::register(htmlentities($_REQUEST[self::USER_NAME]),
+																					htmlentities($_REQUEST[self::USER_EMAIL]), 
+																					htmlentities($_REQUEST[self::USER_PASSWORD]), 
+																					htmlentities($_REQUEST[self::USER_PASSWORD_CONFIRMATION]));
 				}			
 				Util::redirect("index.php?view=login");
 				break;
 
 			case self::DELETE_POST : 
 				DataManager::DeletePost($_REQUEST[self::POST_ID]);
+				Util::redirect();
 				break;
 
 			case self::NEW_POST :
 				$s = var_dump($_REQUEST);
-				DataManager::CreateNewPost($_REQUEST['channelId'], $_REQUEST['userId'], 
-				 													 $_REQUEST[self::NEW_TITLE], $_REQUEST[self::NEW_TEXT]);
+				DataManager::CreateNewPost($_REQUEST['channelId'], 
+																		$_REQUEST['userId'], 
+																		htmlentities($_REQUEST[self::NEW_TITLE]), 
+																		htmlentities($_REQUEST[self::NEW_TEXT]));
+				Util::redirect();																		
+				break;
+
+		
+			case self::EDIT_POST:
+				DataManager::editPost($_REQUEST[self::POST_ID],  
+															htmlentities($_REQUEST[self::NEW_TEXT]));
+				Util::redirect();
 				break;
 
 			default :
