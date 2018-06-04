@@ -51,7 +51,7 @@ width: 75%;
 }
 
 #sidebar {
-  position: absolute;
+  position: fixed;
   left: 0px;
   top: 0px;
   height: 100%;
@@ -110,10 +110,11 @@ ul ul a {
   width: 65px;
 }
 
-.glyphicon{
+.actionButton {
   float:right;
-  margin-right: 10px;
-  margin-top: 5px;
+}
+.glyphicon{
+
 }
 
 .comment-box .comment-header{
@@ -141,3 +142,8 @@ ul ul a {
 .input-container{
   background-color:darkblue;
 }
+
+.newPostForm{
+  margin-top:20px;
+}
+

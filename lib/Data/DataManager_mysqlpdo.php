@@ -261,7 +261,7 @@ class DataManager implements IDataManager {
 			$res = self::query($con, "
 				SELECT id, id_user, id_channel, title, text
 				FROM posts 
-				WHERE id_channel = ?
+				WHERE id_channel = ? AND deleted = 0;
 			", [$channelId]);
 
 
@@ -274,5 +274,54 @@ class DataManager implements IDataManager {
 			self::closeConnection($con);
 	
 			return $posts;
+		}
+
+		public static function createNewPost(int $channelId, int $userId, string $title, string $text){
+			$con = self::getConnection();
+			self::query($con, "
+				INSERT INTO posts (id_user, id_channel, title, text)
+				VALUES (?, ?, ?, ?)",
+				[$channelId, $userId, $title, $text]	
+			);
+			self::closeConnection($con);
+		}
+
+		public static function getEditablePostId(int $channelId, int $userId): int {
+			$con = self::getConnection();
+			$res = self::query($con, "
+				SELECT MAX(id) as id
+				FROM posts 
+				WHERE id_user = ? AND id_channel = ? AND deleted = 0",
+				[$channelId, $userId]);
+			
+				if($res != null){
+					$pos = self::fetchObject($res)->id;
+					
+					$res = self::query($con, "
+					SELECT MAX(id) as id
+					FROM posts 
+					WHERE id_channel = ? AND deleted=0",
+					[$channelId]);
+					
+					$pos2 = self::fetchObject($res)->id;
+					if($pos == $pos2){
+						self::closeConnection($con);
+						return $pos;
+					}
+				}
+				self::closeConnection($con);
+				return 0;
+		}
+
+		public static function deletePost(int $postId) {
+			$con = self::getConnection();
+			$res = self::query($con, "
+				UPDATE posts 
+				SET deleted = 1
+				WHERE id = ?",
+				[$postId]);
+
+				self::closeConnection($con);
+				return 0;
 		}
 }

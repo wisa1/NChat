@@ -27,6 +27,8 @@ class Controller
 	const NEW_POST = 'newPost';
 	const NEW_TITLE = 'newTitle';
 	const NEW_TEXT = 'newText';
+	const DELETE_POST = 'deletePost';
+	const POST_ID = 'postId';
 	
 	const PAGE = 'page';
 	const REGISTER = 'register';
@@ -71,9 +73,14 @@ class Controller
 				Util::redirect("index.php?view=login");
 				break;
 
+			case self::DELETE_POST : 
+				DataManager::DeletePost($_REQUEST[self::POST_ID]);
+				break;
+
 			case self::NEW_POST :
-				//DataManager::CreateNewPost($_REQUEST[])
-				
+				$s = var_dump($_REQUEST);
+				DataManager::CreateNewPost($_REQUEST['channelId'], $_REQUEST['userId'], 
+				 													 $_REQUEST[self::NEW_TITLE], $_REQUEST[self::NEW_TEXT]);
 				break;
 
 			default :
