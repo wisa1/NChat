@@ -144,10 +144,18 @@ class DataManager implements IDataManager {
 				userName, 
 				passwordHash,
 				email
-			) VALUES ( ?, ? ,?)", 
-			[$userName, hash('sha1', $userName.'#'.$password), $password]);
+			) VALUES (?,?,?)", 
+			[$userName, hash('sha1', $userName.'#'.$password), $email]);
 
 			$usr = self::getUserByUserName($userName);
+
+			self::query($con, "
+			INSERT INTO channels_users 
+			( 
+				id_channel,
+				id_user
+			) (SELECT id, ? FROM channels);",
+			[$usr->getId()]);
 
 			self::closeConnection($con);
 			return $usr;
@@ -195,7 +203,7 @@ class DataManager implements IDataManager {
 		public static function getPostByPostId(int $postId, int $userId) : ?Post {
 			$con = self::getConnection();
 			$res = self::query($con, "
-				SELECT id, p.id_user, id_channel, title, text, important
+				SELECT id, p.id_user, id_channel, title, text, pu.important, timestamp
 				FROM posts p
 				LEFT OUTER JOIN posts_users_property pu
 				ON p.id = pu.id_post AND pu.id_user = ?
@@ -205,7 +213,9 @@ class DataManager implements IDataManager {
 
 			if($res != null){
 				$post = self::fetchObject($res);
-				return new Post($post->id, $post->id_user, $post->id_channel, $post->title, $post->text, $post->important);
+				if($post){
+					return new Post($post->id, $post->id_user, $post->id_channel, $post->title, $post->text, $post->important, $post->timestamp);
+				}
 			}
 			return null;
 		}
@@ -213,20 +223,28 @@ class DataManager implements IDataManager {
 		public static function getPostsByChannelId(int $channelId, int $userId) : ?array {
 			$con = self::getConnection();
 			$res = self::query($con, "
-				SELECT id, p.id_user, id_channel, title, text, pu.important
+				SELECT id, p.id_user, id_channel, title, text, pu.important, timestamp
 				FROM posts p
 				LEFT OUTER JOIN posts_users_property pu
 				ON p.id = pu.id_post and pu.id_user = ?
 				WHERE id_channel = ? AND 
-							deleted = 0;
+							deleted = 0
+				ORDER BY pu.important DESC;
 			", [$userId, $channelId]);
 
 
 			$posts = null;
 			while ($pos = self::fetchObject($res)) {
-				$posts[] = new Post($pos->id, $pos->id_user, $pos->id_channel, $pos->title, $pos->text, $pos->important);
+				$posts[] = new Post($pos->id, $pos->id_user, $pos->id_channel, $pos->title, $pos->text, $pos->important, $pos->timestamp);
 			}
-	
+
+			self::query($con, "
+				UPDATE channels_users
+				SET lastSeen = ?
+				WHERE id_channel = ? AND 
+				      id_user = ?;
+			", [$_SERVER['REQUEST_TIME'], $channelId, $userId]);
+
 			self::close($res);
 			self::closeConnection($con);
 	
@@ -236,9 +254,9 @@ class DataManager implements IDataManager {
 		public static function createNewPost(int $channelId, int $userId, string $title, string $text){
 			$con = self::getConnection();
 			self::query($con, "
-				INSERT INTO posts (id_user, id_channel, title, text)
-				VALUES (?, ?, ?, ?)",
-				[$channelId, $userId, $title, $text]	
+				INSERT INTO posts (id_user, id_channel, title, text, timestamp)
+				VALUES (?, ?, ?, ?, ?)",
+				[$userId, $channelId, $title, $text, $_SERVER['REQUEST_TIME']]	
 			);
 			self::closeConnection($con);
 		}
@@ -249,10 +267,10 @@ class DataManager implements IDataManager {
 				SELECT MAX(id) as id
 				FROM posts 
 				WHERE id_user = ? AND id_channel = ? AND deleted = 0",
-				[$channelId, $userId]);
+				[$userId, $channelId]);
 			
 				if($res != null){
-					$pos = self::fetchObject($res)->id;
+					$pos = self::fetchObject($res);
 					
 					$res = self::query($con, "
 					SELECT MAX(id) as id
@@ -261,9 +279,9 @@ class DataManager implements IDataManager {
 					[$channelId]);
 					
 					$pos2 = self::fetchObject($res)->id;
-					if($pos == $pos2 && $pos2 != null){
+					if($pos->id == $pos2 && $pos2 != null){
 						self::closeConnection($con);
-						return $pos;
+						return $pos2;
 					}
 				}
 				self::closeConnection($con);
@@ -325,9 +343,29 @@ class DataManager implements IDataManager {
 					  AND id_user = ?;
 				", [$postId, $userId]);
 			}
+			self::closeConnection($con);
+			return 0;
+		}
 
-			
+		public static function getLastChecked(int $channelId, int $userId): int{
+			$con = self::getConnection();
+			$res = self::query($con,"
+				SELECT lastSeen 
+				FROM channels_users
+				WHERE id_channel = ? AND
+				      id_user = ?;
+			", [$channelId, $userId]);
+
+			$pos = self::fetchObject($res);
+			if($pos != null){
 				self::closeConnection($con);
-				return 0;
+				if($pos->lastSeen == null){
+					return 0; 
+				} else {
+					return $pos->lastSeen;
+				}
+			}
+			self::closeConnection($con);
+			return 2147483647; //int max on 32 bit - big enough for this purpose
 		}
 }

@@ -9,8 +9,10 @@ $posts = null;
 
 $user = AuthenticationManager::getAuthenticatedUser();
 
+$lastChecked = DataManager::getLastChecked($_REQUEST["channelid"], $user->getId());
 $posts = DataManager::getPostsByChannelId($_REQUEST["channelid"], $user->getId());
 $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId());
+
 ?>
 
 <div class='container'>
@@ -18,23 +20,22 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
   if ($posts != null){
     foreach($posts as $post){
   ?>    
-		 <div id="<?php echo $post->getId(); ?>" class="media comment-box">
+		 <div id="<?php echo $post->getId(); ?>" class="media comment-box  <?php if($post->getTimestamp() > $lastChecked) {echo("unread"); }  ?>">
         <div class="media comment-header">
-          <p> <?php echo $post->getImportant(); ?> </p>
           <p class="media-heading">Von: <?php echo $post->getUserName(); ?></p>
           <p class="media-heading">Titel: <?php echo $post->getTitle(); ?></p>
           
           <?php if($post->getId() == $editable) { ?>
-            <button type="button" class="actionButton" data-toggle="modal" data-target="#editModal">
+            <button type="button" class="editButton floatRight" data-toggle="modal" data-target="#editModal">
               <span class="glyphicon glyphicon-pencil"></span>
             </button>
 
-            <button type="button" class="actionButton">
+            <button type="button" class="actionButton floatRight">
               <span class="glyphicon glyphicon-remove"></span>
             </button>
           <?php }?>
 
-          <button type="button" class="actionButton">
+          <button type="button" class="actionButton floatRight">
             <?php if($post->getImportant() == 1){ ?>
               <span class="glyphicon glyphicon-star"></span>
             <?php }  else { ?>
@@ -76,6 +77,7 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
   <?php
     $editablePost = DataManager::getPostByPostId($editable, $user->getId());
   ?>
+  <?php if($editable != null){ ?>
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
@@ -92,17 +94,23 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
       </div>
     </div>
   </div>
+  <?php } ?>
 </div>
 
 <script>
+  function htmlEntities(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  } 
+
   $("#newPostForm").submit(function(e) {
-    var url = "index.php?view=chat&action=newPost";
+    var url = "index.php?view=chat";
     $.ajax({
           type: "POST",
           url: url,
           data: $("#newPostForm").serialize()
                 +"&channelId="+<?php echo $_REQUEST["channelid"]; ?>+
-                "&userId="+<?php echo $user->getId(); ?>, 
+                "&userId="+<?php echo $user->getId(); ?> +
+                "&action=newPost", 
           success: function(data)
           {
             var toload = "index.php?view=chatContent" + 
@@ -132,7 +140,7 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
     $.ajax({
       type: "POST",
       url: url,
-      data: encodeURI("action=editPost&postId=" + <?php echo $editable ?> + "&newText=" + $('#editedText').val()),
+      data: encodeURI("action=editPost&postId=" + <?php echo $editable ?> + "&newText=" + htmlEntities($('#editedText').val())),
         success: function(data){
           var toload = "index.php?view=chatContent" + 
           "&channelid="+ <?php echo $_REQUEST["channelid"] ?>;
@@ -153,7 +161,5 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
           $("#content").load(toload);
         }
     })
-
   })
-
 </script>

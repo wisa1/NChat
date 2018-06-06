@@ -24,16 +24,16 @@ use NChat\Util;
 			    			<div class="row">
 			    				<div class="col-xs-6 col-sm-6 col-md-6">
 			    					<div class="form-group">
-			    						<input type="password" name="<?php echo NChat\Controller::USER_PASSWORD?>" id="password" class="form-control input-sm" placeholder="Password">
+			    						<input type="password" name="<?php echo NChat\Controller::USER_PASSWORD?>" id="password" class="form-control input-sm" placeholder="Passwort">
 			    					</div>
 			    				</div>
 			    				<div class="col-xs-6 col-sm-6 col-md-6">
 			    					<div class="form-group">
-			    						<input type="password" name="<?php echo NChat\Controller::USER_PASSWORD_CONFIRMATION?>" id="password_confirmation" class="form-control input-sm" placeholder="Confirm Password">
+			    						<input type="password" name="<?php echo NChat\Controller::USER_PASSWORD_CONFIRMATION?>" id="password_confirmation" class="form-control input-sm" placeholder="Passwort bestätigen">
 			    					</div>
 			    				</div>
 			    			</div>
-			    			<input type="submit" value="Register" class="btn btn-info btn-block">
+			    			<input type="submit" value="Registrieren" class="btn btn-info btn-block">
 			    		</form>
 			    	</div>
 	    		</div>

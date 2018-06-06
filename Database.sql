@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: fh_2018_scm4_s1610307026
 -- ------------------------------------------------------
--- Server version	5.5.5-10.1.32-MariaDB
+-- Server version	5.5.5-10.1.30-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -39,7 +39,7 @@ CREATE TABLE `channels` (
 
 LOCK TABLES `channels` WRITE;
 /*!40000 ALTER TABLE `channels` DISABLE KEYS */;
-INSERT INTO `channels` VALUES (1,'Technisches','Technisches zu NChat',0),(2,'Allgemeins','Allgemeines zu NChat',0);
+INSERT INTO `channels` VALUES (1,'Technisches','Technisches zu NChat',0),(2,'Allgemeines','Allgemeines zu NChat',0);
 /*!40000 ALTER TABLE `channels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67,7 +67,7 @@ CREATE TABLE `channels_users` (
 
 LOCK TABLES `channels_users` WRITE;
 /*!40000 ALTER TABLE `channels_users` DISABLE KEYS */;
-INSERT INTO `channels_users` VALUES (1,1,NULL),(2,1,NULL);
+INSERT INTO `channels_users` VALUES (1,9,1528315155),(1,10,1528314165),(2,9,1528309208),(2,10,1528310427);
 /*!40000 ALTER TABLE `channels_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,13 +85,14 @@ CREATE TABLE `posts` (
   `title` text NOT NULL,
   `text` text,
   `deleted` tinyint(4) NOT NULL,
+  `timestamp` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idposts_UNIQUE` (`id`),
   KEY `fk_users_idx` (`id_user`),
   KEY `fk_channels_idx` (`id_channel`),
   CONSTRAINT `posts_fk_channels` FOREIGN KEY (`id_channel`) REFERENCES `channels` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `posts_fk_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +101,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (1,1,1,'Titel des ersten Posts','Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',0),(2,1,1,'Titel des 2. Posts','Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.',1),(3,1,1,'test','test',1),(4,1,1,'aaa','dsdds',1),(7,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(8,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(9,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(10,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(11,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(12,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(13,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(14,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(15,1,1,'Wahnsinn, es scheint zu funktionieren','bitte funktioniert jetzt auch das einfügen',1),(16,1,1,'ok - einfügen ! ','gogogogog',1),(17,1,1,'ok -- numoi','auf gehts ',1),(18,1,1,'Editier-Test','Hallo, dieser Text soll bearbeitet werden! ASLD&Ouml;JKas&ouml;dlkjasd&ouml;flkjasd&ouml;flkasdf\nasdfasdfasdfhaaaaaa xdxdcd \n&lt;button&gt; ha&ouml;ldkfja&ouml;lsdkfj &lt;/button&gt;   ',0),(19,1,1,'Editier-Test','najao daun schauma moi &lt;button&gt; a&ouml;sdlkfj&ouml; &lt;/button&gt;',1),(20,1,1,'L&ouml;schen-Test','Text der gleich wieder gel&ouml;scht wird',1),(21,1,1,'Edit-Text','text, der gleich editiert wird , super geil',1),(22,1,1,'Test','test-222\r\n',0);
+INSERT INTO `posts` VALUES (64,9,1,'Ein erster Beitrag','Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',0,1528309275),(65,10,1,'Fritz-Test','Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',0,1528309325),(66,10,2,'Titel im Allgemeinen Channel','Text f&uuml;r den allgemeinen Channel',0,1528309992);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,7 +129,7 @@ CREATE TABLE `posts_users_property` (
 
 LOCK TABLES `posts_users_property` WRITE;
 /*!40000 ALTER TABLE `posts_users_property` DISABLE KEYS */;
-INSERT INTO `posts_users_property` VALUES (1,1,0),(18,1,1),(22,1,0);
+INSERT INTO `posts_users_property` VALUES (65,10,1);
 /*!40000 ALTER TABLE `posts_users_property` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,7 +149,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `userName_UNIQUE` (`userName`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +158,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Wisa','02c08649ca46c1b051378194f72b9172a5aa7d87',NULL,'11111'),(2,'Fritz','dee173a3be114c27976e85acfa4dc86899e1c129',NULL,'Fritz');
+INSERT INTO `users` VALUES (9,'Wisa','02c08649ca46c1b051378194f72b9172a5aa7d87',NULL,'Wisa@a1.com'),(10,'Fritz','ebed2be4b7b71ec105e47be07abc0fc612714b2b',NULL,'fritz@a1.com');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -170,4 +171,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-06 13:16:43
+-- Dump completed on 2018-06-06 22:18:18

@@ -17,4 +17,5 @@ interface IDataManager {
 	public static function getEditablePostId(int $channelId, int $userId): int;
 	public static function toggleImportant(int $postId, int $userId);
 	public static function deletePost(int $postId);
+	public static function getLastChecked(int $channelId, int $userId): int;
 }

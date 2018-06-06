@@ -32,7 +32,6 @@ class Controller
 	const EDIT_POST = 'editPost';
 
 	const TOGGLE_IMPORTANT = 'toggleImportant';
-	
 	const PAGE = 'page';
 	const REGISTER = 'register';
 	
@@ -87,11 +86,15 @@ class Controller
 
 			case self::NEW_POST :
 				$s = var_dump($_REQUEST);
-				DataManager::CreateNewPost($_REQUEST['channelId'], 
-																		$_REQUEST['userId'], 
-																		htmlentities($_REQUEST[self::NEW_TITLE]), 
-																		htmlentities($_REQUEST[self::NEW_TEXT]));
-				Util::redirect();																		
+				try{
+					if(ISSET($_REQUEST['channelId']) && ISSET($_REQUEST['userId'])){
+						DataManager::CreateNewPost($_REQUEST['channelId'], 
+																				$_REQUEST['userId'], 
+																				htmlentities($_REQUEST[self::NEW_TITLE]), 
+																				htmlentities($_REQUEST[self::NEW_TEXT]));
+					}
+				} catch(\Exception $e) {}
+				Util::redirect("");																		
 				break;
 
 		
