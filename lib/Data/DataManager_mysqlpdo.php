@@ -95,26 +95,6 @@ class DataManager implements IDataManager {
 		return $categories;
 	}
 
-	public static function getBooksByCategory(int $categoryId) : array {
-    	$books = [];
-
-		$con = self::getConnection();
-		$res = self::query($con, "
-			SELECT id, categoryId, title, author, price
-			FROM books
-			WHERE categoryId = ?;
-		", [$categoryId]);
-
-		while ($book = self::fetchObject($res)) {
-			$books[] = new Book($book->id, $book->categoryId, $book->title, $book->author, $book->price);
-		}
-
-		self::close($res);
-		self::closeConnection($con);
-
-    	return $books;
-	}
-
 	public static function getUserById(int $userId) {
 		$user = null;
 
@@ -155,50 +135,6 @@ class DataManager implements IDataManager {
 		return $user;
 	}
 
-	public static function createOrder(int $userId, array $bookIds, string $nameOnCard, string $cardNumber) : int {
-		$con = self::getConnection();
-
-		$con->beginTransaction();
-
-		try {
-			self::query($con, "
-				INSERT INTO orders (
-					userId,
-					creditCardNumber,
-					creditCardHolder
-				) VALUES (
-					?, ?, ?
-				);
-			", [
-				$userId,
-				$cardNumber,
-				$nameOnCard
-			]);
-
-			$orderId = self::lastInsertId($con);
-
-			foreach ($bookIds AS $bookId) {
-				self::query($con, "
-					INSERT INTO orderedbooks
-					(
-						orderId,
-						bookId
-					) VALUES (
-						?, ?
-					);
-				", [$orderId, $bookId]);
-			}
-			$con->commit();
-		}
-		catch (\Exception $e) {
-			$con->rollBack();
-			$orderId = null;
-		}
-
-		self::closeConnection($con);
-		return $orderId;
-		}
-		
 		public static function createUser(string $userName, string $email, string $password) : User{
 			$con = self::getConnection();
 
@@ -261,7 +197,7 @@ class DataManager implements IDataManager {
 			$res = self::query($con, "
 				SELECT id, p.id_user, id_channel, title, text, important
 				FROM posts p
-				LEFT OUTER JOIN posts_users pu
+				LEFT OUTER JOIN posts_users_property pu
 				ON p.id = pu.id_post AND pu.id_user = ?
 				WHERE id = ? AND 
 							deleted = 0;
@@ -279,7 +215,7 @@ class DataManager implements IDataManager {
 			$res = self::query($con, "
 				SELECT id, p.id_user, id_channel, title, text, pu.important
 				FROM posts p
-				LEFT OUTER JOIN posts_users pu
+				LEFT OUTER JOIN posts_users_property pu
 				ON p.id = pu.id_post and pu.id_user = ?
 				WHERE id_channel = ? AND 
 							deleted = 0;
@@ -354,6 +290,43 @@ class DataManager implements IDataManager {
 				WHERE id = ?",
 				[$text, $postId]);
 
+				self::closeConnection($con);
+				return 0;
+		}
+
+		public static function toggleImportant(int $postId, int $userId){
+			$post = self::getPostByPostId($postId, $userId);
+	
+			$con = self::getConnection();
+
+			//case 1 -> no value yet -> insert line
+			$test = $post->getImportant();
+			if($post->getImportant() === null){
+				self::query($con,"
+					INSERT INTO posts_users_property (id_post, id_user, important) 
+					VALUES(?,?,?);
+				", [$postId, $userId, 1]);
+			} 
+			//case 2 -> line exists, set value 1
+			else if ($post->getImportant() === 0){
+				self::query($con,"
+					UPDATE posts_users_property 
+					SET Important = 1 
+					WHERE id_post = ? 
+					  AND id_user = ?;
+				", [$postId, $userId]);
+			}
+			//case 3 -> line exists, set value 0
+			else if ($post->getImportant() === 1){
+				self::query($con,"
+					UPDATE posts_users_property 
+					SET Important = 0 
+					WHERE id_post = ? 
+					  AND id_user = ?;
+				", [$postId, $userId]);
+			}
+
+			
 				self::closeConnection($con);
 				return 0;
 		}

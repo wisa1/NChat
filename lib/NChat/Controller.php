@@ -30,6 +30,8 @@ class Controller
 	const DELETE_POST = 'deletePost';
 	const POST_ID = 'postId';
 	const EDIT_POST = 'editPost';
+
+	const TOGGLE_IMPORTANT = 'toggleImportant';
 	
 	const PAGE = 'page';
 	const REGISTER = 'register';
@@ -96,6 +98,11 @@ class Controller
 			case self::EDIT_POST:
 				DataManager::editPost($_REQUEST[self::POST_ID],  
 															htmlentities($_REQUEST[self::NEW_TEXT]));
+				Util::redirect();
+				break;
+			
+			case self::TOGGLE_IMPORTANT: 
+				DataManager::toggleImportant($_REQUEST[self::POST_ID], $_REQUEST['userId']);
 				Util::redirect();
 				break;
 

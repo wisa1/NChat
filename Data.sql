@@ -1,8 +1,5 @@
-﻿-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
---
--- Host: 127.0.0.1    Database: fh_2018_scm4_s1610307026
--- ------------------------------------------------------
--- Server version	5.5.5-10.1.30-MariaDB
+CREATE SCHEMA IF NOT EXISTS `fh_2018_scm4_s1610307026` DEFAULT CHARACTER SET latin1 ;
+USE `fh_2018_scm4_s1610307026` ;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

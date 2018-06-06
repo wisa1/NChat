@@ -99,11 +99,9 @@ ul ul a {
 
 
 /* --- Comment Box for ChatContent ----- */
-/* CSS Test begin */
 .comment-box {
   margin-top: 30px !important;
 }
-/* CSS Test end */
 
 .comment-box .media-left {
   padding-right: 10px;
@@ -145,5 +143,9 @@ ul ul a {
 
 .newPostForm{
   margin-top:20px;
+}
+
+#editedText {
+  width: 100%;
 }
 

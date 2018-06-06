@@ -18,8 +18,7 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
   if ($posts != null){
     foreach($posts as $post){
   ?>    
-    
-		 <div class="media comment-box">
+		 <div id="<?php echo $post->getId(); ?>" class="media comment-box">
         <div class="media comment-header">
           <p> <?php echo $post->getImportant(); ?> </p>
           <p class="media-heading">Von: <?php echo $post->getUserName(); ?></p>
@@ -64,7 +63,7 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
 
   <div class="input-group">
     <span class="input-group-addon">Text</span>
-    <textarea id="newTitle" type="text" class="form-control" name="<?php echo NChat\Controller::NEW_TEXT ?>" placeholder="Text"/>
+    <textarea id="newText" type="text" class="form-control" name="<?php echo NChat\Controller::NEW_TEXT ?>" placeholder="Text"/>
   </div>
 
   <input type="submit" value="Erstellen"/>
@@ -92,7 +91,6 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
         <button id="editAbort" type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -141,6 +139,21 @@ $editable = DataManager::getEditablePostId($_REQUEST["channelid"], $user->getId(
           $("#content").load(toload);
         }
     })
+  })
+
+  $('.actionButton').click(function(){
+    var url = "index.php?view=chat";
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: encodeURI("action=toggleImportant&postId=" + $(this).parent().parent().attr('id') + "&userId=" + "<?php echo $user->getId();?>"),
+        success: function(data){
+          var toload = "index.php?view=chatContent" + 
+          "&channelid="+ <?php echo $_REQUEST["channelid"] ?>;
+          $("#content").load(toload);
+        }
+    })
+
   })
 
 </script>
